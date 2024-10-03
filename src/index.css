@@ -1,0 +1,19 @@
+.App {
+  text-align: center;
+  margin: 20px;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.spending-option {
+  margin: 10px;
+}
+
+.spending-summary {
+  margin-top: 20px;
+}
