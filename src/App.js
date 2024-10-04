@@ -82,7 +82,7 @@ const spendingOptions = [
   { name: "Sailboat", cost: 130000, image: "sailboat.jpg" },
   { name: "Mega Yacht", cost: 300000000, image: "mega_yacht.jpg" },
 ];
-
+<Analytics />
 const App = () => {
   const [totalSpent, setTotalSpent] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
