@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState } from 'react';
 import {
   Container,
   Grid,
@@ -10,10 +9,14 @@ import {
   Paper,
   Box,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from '@mui/material';
 import SpendingOption from './components/SpendingOption';
 import SpendingSummary from './components/SpendingSummary';
 import SpendingConfirmation from './components/SpendingConfirmation';
+import ElonMuskImage from './assets/elon_musk.jpg'; // Ensure you have the image in your assets folder
 import './App.css';
 
 // Initial fortune amount
@@ -79,38 +82,13 @@ const spendingOptions = [
   { name: "Mega Yacht", cost: 300000000, image: "mega_yacht.jpg" },
 ];
 
-const AdSense = () => {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9623127137652712';
-    script.crossOrigin = 'anonymous';
-    document.body.appendChild(script);
-    
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  return (
-    <div style={{ textAlign: 'center', margin: '20px 0' }}>
-      <ins
-        className="adsbygoogle"
-        style={{ display: 'block' }}
-        data-ad-client="ca-pub-9623127137652712"
-        data-ad-slot="your-ad-slot-id"
-        data-ad-format="auto"
-      ></ins>
-    </div>
-  );
-};
-
 const App = () => {
   const [totalSpent, setTotalSpent] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [currentOption, setCurrentOption] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [privacyPolicyOpen, setPrivacyPolicyOpen] = useState(false); // State for Privacy Policy modal
 
   // Filter options based on the search term
   const filteredOptions = spendingOptions.filter(option =>
@@ -147,7 +125,6 @@ const App = () => {
         return o;
       });
       setSelectedOptions(updatedOptions);
-      // Recalculate totalSpent
       const newTotal = updatedOptions.reduce((total, o) => total + o.cost * o.quantity, 0);
       setTotalSpent(newTotal);
     }
@@ -159,38 +136,47 @@ const App = () => {
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
+      
       <Box sx={{ textAlign: 'center', marginBottom: 4, backgroundColor: '#f7f7f7', padding: 4, borderRadius: 2 }}>
-        <Typography variant="h2" color="primary" gutterBottom>
-          Spend Elon Musk's Fortune
-        </Typography>
-        <Typography variant="h5" color="textSecondary">
-          Remaining: <strong>${remainingBalance.toLocaleString()} USD</strong>
-        </Typography>
-        <Typography variant="h5" color="textSecondary">
-          You only spent <strong>{percentageSpent} %</strong> of the total!
-        </Typography>
-        <Grid container justifyContent="center" style={{ margin: '20px 0' }}>
-          <Grid item xs={12} sm={6} md={4}>
-            <TextField
-              label="Search for an item"
-              variant="outlined"
-              fullWidth
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </Grid>
-        </Grid>
-        <LinearProgress variant="determinate" value={(totalSpent / INITIAL_FORTUNE) * 100} />
-      </Box>
+  {/* Elon Musk's Image */}
+  <div className="elon-image-container">
+    <img 
+      src={ElonMuskImage} 
+      alt="Elon Musk" 
+      className="elon-image"
+    />
+  </div>
+  <Typography variant="h2" color="primary" gutterBottom>
+    Spend Elon Musk's Fortune
+  </Typography>
+  <Typography variant="h5" color="textSecondary">
+    Remaining: <strong>${remainingBalance.toLocaleString()} USD</strong>
+  </Typography>
+  <Typography variant="h5" color="textSecondary">
+    You only spent <strong>{percentageSpent} %</strong> of the total!
+  </Typography>
+  <Grid container justifyContent="center" style={{ margin: '20px 0' }}>
+    <Grid item xs={12} sm={6} md={4}>
+      <TextField
+        label="Search for an item"
+        variant="outlined"
+        fullWidth
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+    </Grid>
+  </Grid>
+  <LinearProgress variant="determinate" value={(totalSpent / INITIAL_FORTUNE) * 100} />
+</Box>
 
       <Grid container spacing={3}>
         {filteredOptions.map((option, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
-            <SpendingOption
-              option={option}
-              onSpend={handleSpendClick}
-              onRemove={handleRemove}
-              quantity={selectedOptions.find(o => o.name === option.name)?.quantity || 0}
-              onChangeQuantity={handleChangeQuantity}
+            <SpendingOption 
+              option={option} 
+              onSpend={handleSpendClick} 
+              onRemove={handleRemove} 
+              quantity={selectedOptions.find(o => o.name === option.name)?.quantity || 0} 
+              onChangeQuantity={handleChangeQuantity} 
             />
           </Grid>
         ))}
@@ -199,18 +185,15 @@ const App = () => {
       <Grid container justifyContent="center" style={{ margin: '20px 0' }}>
         <Grid item xs={12} sm={8}>
           <Paper style={{ padding: 16 }}>
-            <SpendingSummary
-              totalSpent={totalSpent}
-              selectedOptions={selectedOptions}
-              onChangeQuantity={handleChangeQuantity}
-              onRemove={handleRemove}
+            <SpendingSummary 
+              totalSpent={totalSpent} 
+              selectedOptions={selectedOptions} 
+              onChangeQuantity={handleChangeQuantity} 
+              onRemove={handleRemove} 
             />
           </Paper>
         </Grid>
       </Grid>
-
-      {/* AdSense Component */}
-      <AdSense />
 
       <SpendingConfirmation
         open={confirmationOpen}
@@ -218,6 +201,24 @@ const App = () => {
         onClose={() => setConfirmationOpen(false)}
         onConfirm={handleConfirmSpend}
       />
+
+      {/* Privacy Policy Section */}
+      <Box sx={{ textAlign: 'center', marginTop: 4 }}>
+        <Button variant="text" onClick={() => setPrivacyPolicyOpen(true)}>
+          Privacy Policy
+        </Button>
+      </Box>
+
+      {/* Privacy Policy Modal */}
+      <Dialog open={privacyPolicyOpen} onClose={() => setPrivacyPolicyOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Privacy Policy</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" paragraph>
+            This app is for entertainment purposes only. We do not collect any personal data, and all spending is fictional.
+          </Typography>
+        </DialogContent>
+        <Button onClick={() => setPrivacyPolicyOpen(false)}>Close</Button>
+      </Dialog>
     </Container>
   );
 };
